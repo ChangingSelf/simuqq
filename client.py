@@ -3,6 +3,8 @@
 simuqq的客户端
 '''
 import socket
+import gui.login_dlg
+import tkinter as tk
 
 class Client:
     def __init__(self):
@@ -22,5 +24,7 @@ class Client:
 if __name__ == '__main__':
     client = Client()
     
-    client.connect('127.0.0.1',9999)
+    window = tk.Tk()
+    loginDlg = gui.login_dlg.LoginDlg(window)
+    loginDlg.mainloop()
     

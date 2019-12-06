@@ -4,6 +4,7 @@
 '''
 
 import tkinter as tk
+import gui.chat_dlg
 
 class LoginDlg(tk.Frame):
     def __init__(self, master=None):
@@ -40,12 +41,17 @@ class LoginDlg(tk.Frame):
         self.passwdEntry.grid(row=1, column=1,columnspan=2)
 
         # 登录按钮
-        self.loginBtn = tk.Button(loginLF, text='登录')
+        self.loginBtn = tk.Button(loginLF, text='登录',command=self.toChatDlg)
         self.loginBtn.grid(row=2, column=1)
 
         # 注册按钮
         self.signupBtn = tk.Button(loginLF, text='注册')
         self.signupBtn.grid(row=2, column=2)
+
+    def toChatDlg(self):
+        gui.chat_dlg.ChatDlg()
+        self.destroy()
+        
 
 
 
