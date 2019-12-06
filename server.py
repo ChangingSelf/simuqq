@@ -51,10 +51,10 @@ class Server:
             res = self.checkAccount(cliUserName, cliPassword)
             if res == -1:
                 errStr = '账号不存在'
-                self.closeLink(self, cliSock, errStr)  # 关闭连接
+                self.closeLink(cliSock, errStr)  # 关闭连接
             elif res == -2:
                 errStr = '密码错误'
-                self.closeLink(self, cliSock, errStr)  # 关闭连接
+                self.closeLink(cliSock, errStr)  # 关闭连接
             else:
                 cliSock.send('登录成功'.encode())
 
