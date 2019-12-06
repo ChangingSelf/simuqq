@@ -17,6 +17,7 @@ class Server:
         self.host = '127.0.0.1'
         self.serSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.clientDict = {}  # 客户端字典，键是账号字符串，值是ClientData
+        self.dataFile = 'data\\account_database.json'
 
     def launch(self):
         # 绑定地址
@@ -56,7 +57,7 @@ class Server:
                 errStr = '密码错误'
                 self.closeLink(cliSock, errStr)  # 关闭连接
             else:
-                cliSock.send('登录成功'.encode())
+                self.send(cliSock,infoStr='登录成功')
 
     def checkAccount(self, userName, password):
         '''
@@ -68,7 +69,7 @@ class Server:
         password = password.strip()
 
         # 读取数据
-        with open('account_database.json', 'w') as fp:
+        with open(self.dataFile, 'r') as fp:
             accountData = json.load(fp)
 
         # 核对信息
@@ -76,7 +77,7 @@ class Server:
             # 如果不能找到用户名
             return -1  # 账号不存在
 
-        if accountData[userName] != password:
+        if accountData[userName]['password'] != password:
             return -2 # 密码不正确
 
         return 0
@@ -86,8 +87,15 @@ class Server:
         关闭连接
         '''
         if errStr != '':
-            cliSock.send(errStr.encode())
+            msgDict = {
+                'errStr':errStr
+            }
+            self.send(cliSock,msgDict)
         cliSock.close()  # 关闭此连接
+    
+    def send(self,cliSock:socket,**msgDict):
+        msgStr = json.dumps(msgDict)
+        cliSock.send(msgStr.encode())
 
 
 if __name__ == '__main__':
