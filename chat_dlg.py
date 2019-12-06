@@ -16,11 +16,14 @@ class ChatDlg(tk.Frame):
         chatLF.grid(row=0, column=0)
         self.chatLF = chatLF
         # 输出框
-        self.outputTxt = ScrolledText(chatLF)
+        self.outputTxt = ScrolledText(chatLF,state=tk.DISABLED)
         self.outputTxt.grid(row=0,column=0)
         # 输入框
         self.inputTxt = ScrolledText(chatLF,height = 5)
         self.inputTxt.grid(row=1,column=0)
+        # 发送按钮
+        self.sendBtn = tk.Button(chatLF,text='发送')
+        self.sendBtn.grid(row=2,column=0,sticky=tk.E)
 
 
 if __name__ == '__main__':
