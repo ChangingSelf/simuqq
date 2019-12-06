@@ -3,8 +3,11 @@
 simuqq的客户端
 '''
 import socket
+import json
+import time
 import gui.login_dlg
 import tkinter as tk
+from tkinter.messagebox import *
 
 class Client:
     def __init__(self,host,port):
@@ -42,8 +45,52 @@ class Client:
         在填写了用户名和密码之后，如果信息合法，则将信息写入数据文件
         '''
         #从登录对话框获取信息
-        userName = self.loginDlg.userName
-        password = self.loginDlg.password
+        userName = self.loginDlg.userName.get()
+        password = self.loginDlg.password.get()
+
+        #检查合法性
+        if userName == '':
+            self.showerror('用户名不能为空')
+            return
+        if password == '':
+            self.showerror('密码不能为空')
+            return
+        
+        dataFile = 'data\\account_database.json'
+
+        with open(dataFile,'a+') as fp:
+            #使用a+方式打开，防止文件内容被覆盖
+            fp.seek(0)#调整指针到开头
+            accountStr = fp.read()
+            if accountStr=='':
+                #如果文件内没有内容，即刚刚创建
+                accountData={}
+            else:
+                #否则读取文件内容
+                fp.seek(0)
+                accountData = json.loads(accountStr)
+
+            if userName in accountData.keys():
+                self.showerror('该用户名已经被注册')
+                return
+        
+            #写入数据文件
+            accountData.update({
+                userName:{
+                    'password':password,
+                    'registerTime':time.time()
+                }
+            })
+
+            self.showinfo('注册成功！')
+            fp.seek(0)
+            fp.truncate()#只保留从开头到当前位置，其余删除
+            json.dump(accountData,fp,indent=4, separators=(',', ': '))
+
+    def showerror(self,errStr):
+        showerror(title='警告',message=errStr)
+    def showinfo(self,infoStr):
+        showinfo(title='信息',message=infoStr)
 
 if __name__ == '__main__':
     host = '127.0.0.1'

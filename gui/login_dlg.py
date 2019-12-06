@@ -4,7 +4,7 @@
 '''
 
 import tkinter as tk
-import chat_dlg
+import gui.chat_dlg
 
 class LoginDlg(tk.Frame):
     def __init__(self, loginCallback,regCallback,master=None):
