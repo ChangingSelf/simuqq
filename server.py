@@ -25,6 +25,7 @@ class Server:
         self.serSock.listen(20)
         # 创建连接线程
         self.acceptThread = threading.Thread(target=self.accept_loop)
+        self.acceptThread.start()
 
     def accept_loop(self):
         '''
@@ -87,3 +88,9 @@ class Server:
         if errStr != '':
             cliSock.send(errStr.encode())
         cliSock.close()  # 关闭此连接
+
+
+if __name__ == '__main__':
+    server = Server(9999)
+    server.launch()
+    
