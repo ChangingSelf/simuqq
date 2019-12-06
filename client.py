@@ -37,7 +37,13 @@ class Client:
         #如果发送信息成功，且账号信息正确，则弹出好友列表页面
 
     def register(self):
-        pass
+        '''
+        注册
+        在填写了用户名和密码之后，如果信息合法，则将信息写入数据文件
+        '''
+        #从登录对话框获取信息
+        userName = self.loginDlg.userName
+        password = self.loginDlg.password
 
 if __name__ == '__main__':
     host = '127.0.0.1'
