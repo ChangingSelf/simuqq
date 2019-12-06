@@ -9,7 +9,7 @@ class LoginDlg(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master=master)
         self.__userName = ''
-        self.__password = '123'
+        self.__password = ''
         self.pack()
         self.createWidgets()
     
