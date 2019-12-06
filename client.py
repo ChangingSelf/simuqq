@@ -8,6 +8,7 @@ import tkinter as tk
 
 class Client:
     def __init__(self,host,port):
+        #初始化socket
         self.cliSock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
         self.host = host
         self.port = port
@@ -30,6 +31,10 @@ class Client:
     
     def login(self):
         self.connect()
+
+        #如果连接成功，向服务器发送信息
+
+        #如果发送信息成功，且账号信息正确，则弹出好友列表页面
 
     def register(self):
         pass

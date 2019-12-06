@@ -14,18 +14,11 @@ class LoginDlg(tk.Frame):
         self.loginFuc = loginFuc
         self.regFuc = regFuc
         #初始化
-        self.__userName = ''
-        self.__password = ''
+        self.userName = ''
+        self.password = ''
         self.pack()
         self.createWidgets()
-    
-    @property
-    def password(self):
-        return self.__password
 
-    @property
-    def userName(self):
-        return self.__userName
 
     def createWidgets(self):
         # 登录框架=============
