@@ -7,8 +7,13 @@ import tkinter as tk
 import gui.chat_dlg
 
 class LoginDlg(tk.Frame):
-    def __init__(self, master=None):
+    def __init__(self, loginFuc,regFuc,master=None):
         super().__init__(master=master)
+        self.master = master
+        #设置按钮回调函数
+        self.loginFuc = loginFuc
+        self.regFuc = regFuc
+        #初始化
         self.__userName = ''
         self.__password = ''
         self.pack()
@@ -41,16 +46,13 @@ class LoginDlg(tk.Frame):
         self.passwdEntry.grid(row=1, column=1,columnspan=2)
 
         # 登录按钮
-        self.loginBtn = tk.Button(loginLF, text='登录',command=self.toChatDlg)
+        self.loginBtn = tk.Button(loginLF, text='登录',command=self.loginFuc)
         self.loginBtn.grid(row=2, column=1)
 
         # 注册按钮
-        self.signupBtn = tk.Button(loginLF, text='注册')
+        self.signupBtn = tk.Button(loginLF, text='注册',command=self.regFuc)
         self.signupBtn.grid(row=2, column=2)
 
-    def toChatDlg(self):
-        gui.chat_dlg.ChatDlg()
-        self.destroy()
         
 
 
