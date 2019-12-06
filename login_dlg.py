@@ -31,17 +31,21 @@ class LoginDlg(tk.Frame):
         self.userNameLab = tk.Label(loginLF, text='用户名')
         self.userNameLab.grid(row=0, column=0)
         self.userNameEntry = tk.Entry(loginLF)
-        self.userNameEntry.grid(row=0, column=1)
+        self.userNameEntry.grid(row=0, column=1,columnspan=2)
 
         # 密码框
         self.passwdLab = tk.Label(loginLF, text='密码')
         self.passwdLab.grid(row=1, column=0)
         self.passwdEntry = tk.Entry(loginLF,show='*')
-        self.passwdEntry.grid(row=1, column=1)
+        self.passwdEntry.grid(row=1, column=1,columnspan=2)
 
         # 登录按钮
         self.loginBtn = tk.Button(loginLF, text='登录')
         self.loginBtn.grid(row=2, column=1)
+
+        # 注册按钮
+        self.signupBtn = tk.Button(loginLF, text='注册')
+        self.signupBtn.grid(row=2, column=2)
 
 
 
