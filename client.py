@@ -35,7 +35,8 @@ class Client:
             utility.showerror('无法连接至目标主机，可能是目标主机服务未开启')
             
             return -1
-        utility.showinfo('连接成功')
+        #测试用的输出
+        print('连接成功')
         return 0
 
     def login(self):

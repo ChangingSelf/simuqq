@@ -6,6 +6,7 @@ import socket
 import client_data  # 用于保存客户端的数据
 import threading
 import json
+import utility
 
 
 class Server:
@@ -13,11 +14,14 @@ class Server:
         '''
         :param port:服务器监听的端口号
         '''
+        # 初始化socket
         self.port = port
         self.host = '127.0.0.1'
         self.serSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.clientDict = {}  # 客户端字典，键是账号字符串，值是ClientData
+        # 初始化配置
         self.dataFile = 'data\\account_database.json'
+        # 在线账号
+        self.clientDict = {}  # 客户端字典，键是账号字符串，值是ClientData
 
     def launch(self):
         # 绑定地址
@@ -37,16 +41,18 @@ class Server:
             # 接受新的连接请求
             cliSock, cliAddr = self.serSock.accept()
             # 获取客户端提交的账号密码，客户端以json字符串的形式发送过来
-            cliUserData = cliSock.recv(1024)
-            try:
-                cliUserData = json.loads(cliUserData)
-                cliUserName = cliUserData['userName']
-                cliPassword = cliUserData['password']
-            except:
+            cliUserData = cliSock.recv(1024).decode()
+            cliUserData = utility.loadJson(cliUserData)
+
+            
+            if ('userName' not in cliUserData.keys()) or ('password' not in cliUserData.keys()):
                 # 如果发送过来的数据没有按照格式，那么给客户端发送错误信息
                 errStr = '数据有误，请重新连接'
-                self.closeLink(self, cliSock, errStr)  # 关闭连接
+                self.closeLink(cliSock, errStr)  # 关闭连接
                 continue
+            
+            cliUserName = cliUserData['userName']
+            cliPassword = cliUserData['password']
 
             # 检查账号
             res = self.checkAccount(cliUserName, cliPassword)
@@ -90,7 +96,7 @@ class Server:
             msgDict = {
                 'errStr':errStr
             }
-            self.send(cliSock,msgDict)
+            self.send(cliSock,**msgDict)
         cliSock.close()  # 关闭此连接
     
     def send(self,cliSock:socket,**msgDict):

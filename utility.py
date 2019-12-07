@@ -53,6 +53,6 @@ def dumpJson(jsonDict:dict):
 
 if __name__ == '__main__':
     res = loadJson('')
-    res = dumpJson('res')
+    res = dumpJson(res)
     print(res)
     print(type(res))
