@@ -1,6 +1,5 @@
 '''
 simuqq主页面
-主要是好友列表
 '''
 import tkinter as tk
 
@@ -28,7 +27,7 @@ class HomePage(tk.Frame):
         self.userNameLab.grid(row=0, column=1)
 
         # 好友列表框架==================
-        contactLF = tk.LabelFrame(self, text='好友列表')
+        contactLF = tk.LabelFrame(self, text='当前在线账户列表')
         contactLF.grid(row=1, column=0)
         self.contactLF = contactLF
 
