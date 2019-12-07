@@ -219,7 +219,7 @@ class Server:
             self.sendAck(cliSock)
             return 0
 
-    def addressMsg(self,cliSock,msgStr:str):
+    def addressMsg(self,sourceSock,msgStr:str):
         '''
         处理接收到的消息
         :return: 处理成功返回0，出现错误返回-1
@@ -231,8 +231,17 @@ class Server:
             return -1
         
         if msgDict['type'] == 'msg':
-            #如果是发送过来的消息
-            logging.debug('[{}]对[{}]说：{}'.format(self.getUserNameBySock(cliSock),msgDict['userName'],msgDict['message']))
+            #如果是发送过来的聊天消息
+            logging.info('[{}]对[{}]说：{}'.format(self.getUserNameBySock(sourceSock),msgDict['userName'],msgDict['message']))
+            targetSock = self.getSockByUserName(msgDict['userName'])
+            if targetSock == None:
+                self.send(sourceSock,type='err',errStr='对方已经下线')
+                return -1
+            # 转发给对方
+            msgDict['userName'] = self.getUserNameBySock(sourceSock)#将目的用户名改为源用户名
+            self.send(targetSock,**msgDict)
+            
+            
         
     def getCurOnline(self):
         '''
@@ -258,13 +267,21 @@ class Server:
 
     def getUserNameBySock(self,cliSock):
         '''
-        :return: socket对应的用户名
+        :return: socket对应的当前在线的用户名,如果没找到，则返回空字符串
         '''
         for userName,accountInfo in list(self.onlineClients.items()):
             if accountInfo['socket'] == cliSock:
                 return userName
         return ''
-
+    
+    def getSockByUserName(self,userName:str):
+        '''
+        :return: 用户名对应的socket,如果没找到，则返回None
+        '''
+        if userName in self.onlineClients.keys():
+            return self.onlineClients[userName]['socket']
+        else:
+            return None
 if __name__ == '__main__':
     server = Server(9999)
     server.launch()

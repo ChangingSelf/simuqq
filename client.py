@@ -163,11 +163,16 @@ class Client:
         userName = self.gui['homePage'].getCurSelect()
 
         # 打开聊天窗口
+        self.openChatWindow(userName)
+
+    def openChatWindow(self,userName):
         self.chatWith = userName  # 设置聊天对象
         self.gui['chatDlg'].grid(row=0, column=0)
         self.chatWindow.title('[{}]向[{}]发起的聊天'.format(self.userName, userName))
         self.chatWindow.deiconify()
         # self.chatWindow.mainloop()
+
+
 
     def sendChatMsg(self):
         '''
@@ -276,6 +281,14 @@ class Client:
                 # 如果接收到数据刷新消息
                 self.contactList = msgDict['data']['curOnline']
                 self.gui['homePage'].refreshList(self.contactList)
+            if msgDict['type'] == 'msg':
+                # 如果接收到聊天消息
+                self.openChatWindow(msgDict['userName'])
+                # 构建输出内容
+                outputContent = '[{}]{}\n{}'.format(msgDict['userName'],time.strftime('%Y/%m/%d %H:%M:%S'),msgDict['message'])
+
+                self.gui['chatDlg'].addOutputContent(outputContent)
+
 
 
 if __name__ == '__main__':
