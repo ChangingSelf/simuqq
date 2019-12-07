@@ -5,12 +5,13 @@ import tkinter as tk
 
 
 class HomePage(tk.Frame):
-    def __init__(self, master=None):
+    def __init__(self,selectCallback,master=None):
         super().__init__(master=master)
         #self.pack()
         self.master = master
         self.geometry()
         
+        self.selectCallback = selectCallback#双击选择列表项时的回调函数
         self.userName = tk.StringVar()
         self.createWidgets()
 
@@ -35,6 +36,9 @@ class HomePage(tk.Frame):
         self.contactList = tk.Listbox(contactLF)
         self.contactList.grid(row=0,column=0)
 
+        # 绑定双击事件
+        self.contactList.bind('<Double-Button-1>',func=self.selectCallback)
+
     def geometry(self):
         self.master.geometry('300x400')
 
@@ -47,6 +51,10 @@ class HomePage(tk.Frame):
         #再加入列表
         for item in curOnlineList:
             self.contactList.insert(tk.END,str(item))
+
+    def getCurSelect(self):
+        index = self.contactList.curselection()[0]
+        return self.contactList.get(index)
 
 if __name__ == '__main__':
     window = tk.Tk()

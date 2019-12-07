@@ -27,10 +27,11 @@ class Client:
         self.window.title('SimuQQ登录界面')
         self.window.protocol("WM_DELETE_WINDOW", self.quit);#按右上角关闭即关闭程序
         self.window.resizable(0,0)#不可改变大小
+
         self.gui = {
             'loginDlg':gui.login_dlg.LoginDlg(
             self.login, self.register, self.window),
-            'homePage': gui.home_page.HomePage(self.window)
+            'homePage': gui.home_page.HomePage(self.chat,self.window)
         }
         self.gui['loginDlg'].grid(row=0,column=0)
         self.gui['loginDlg'].geometry()
@@ -143,7 +144,17 @@ class Client:
             fp.truncate()  # 只保留从开头到当前位置，其余删除
             json.dump(accountData, fp, indent=4, separators=(',', ':'))
 
-    
+    def chat(self,event):
+        '''
+        与当前选中的客户端聊天
+        '''
+        #获取当前用户名
+        userName = self.gui['homePage'].getCurSelect()
+        
+        #打开聊天界面
+
+
+
 
     def send(self, msg: str):
         '''
@@ -235,7 +246,8 @@ class Client:
                 #如果接收到数据刷新消息
                 self.contactList = msgDict['data']['curOnline']
                 self.gui['homePage'].refreshList(self.contactList)
-                
+
+     
 
 if __name__ == '__main__':
     host = '127.0.0.1'

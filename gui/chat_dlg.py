@@ -5,8 +5,10 @@ import tkinter as tk
 from tkinter.scrolledtext import *
 
 class ChatDlg(tk.Frame):
-    def __init__(self, master=None):
+    def __init__(self,sendCallback,master=None):
         super().__init__(master=master)
+        self.master = master
+        self.sendCallback = sendCallback
         self.pack()
         self.createWidgets()
 
@@ -22,7 +24,7 @@ class ChatDlg(tk.Frame):
         self.inputTxt = ScrolledText(chatLF,height = 5)
         self.inputTxt.grid(row=1,column=0)
         # 发送按钮
-        self.sendBtn = tk.Button(chatLF,text='发送')
+        self.sendBtn = tk.Button(chatLF,text='发送',command=self.sendCallback)
         self.sendBtn.grid(row=2,column=0,sticky=tk.E)
 
 
