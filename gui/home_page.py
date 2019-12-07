@@ -28,7 +28,7 @@ class HomePage(tk.Frame):
         self.userNameLab.grid(row=0, column=1)
 
         # 好友列表框架==================
-        contactLF = tk.LabelFrame(self, text='当前在线账户列表')
+        contactLF = tk.LabelFrame(self, text='现在在线的其他人')
         contactLF.grid(row=1, column=0)
         self.contactLF = contactLF
 
@@ -50,7 +50,8 @@ class HomePage(tk.Frame):
         self.contactList.delete(0,tk.END)
         #再加入列表
         for item in curOnlineList:
-            self.contactList.insert(tk.END,str(item))
+            if str(item) != self.userName.get():
+                self.contactList.insert(tk.END,str(item))
 
     def getCurSelect(self):
         index = self.contactList.curselection()[0]
