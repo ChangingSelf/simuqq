@@ -6,35 +6,36 @@ import socket
 import json
 import time
 import gui.login_dlg
+import utility
 import tkinter as tk
-from tkinter.messagebox import *
 
 
 class Client:
-    def __init__(self, host, port):
+    def __init__(self, host:str, port:int):
         # 初始化socket
         self.cliSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.host = host
         self.port = port
         # 初始化配置
-        self.dataFile = 'data\\account_database.json'
+        self.dataFile = 'data\\account_database.json' #数据文件路径
         self.bufsize = 2048  # 一次最大接收字节数
         # 初始化界面
         self.window = tk.Tk()
         self.loginDlg = gui.login_dlg.LoginDlg(
             self.login, self.register, self.window)
         # 启动登录界面
-        self.loginDlg.mainloop()
+        self.window.mainloop()
 
     def connect(self):
         # 连接
-        self.cliSock.connect((self.host, self.port))
+        
         try:
-            pass
+            self.cliSock.connect((self.host, self.port))
         except:
-            print('无法连接至目标主机，可能是目标主机服务未开启')
+            utility.showerror('无法连接至目标主机，可能是目标主机服务未开启')
+            
             return -1
-        print('连接成功')
+        utility.showinfo('连接成功')
         return 0
 
     def login(self):
@@ -44,10 +45,10 @@ class Client:
 
         # 检查合法性
         if userName == '':
-            self.showerror('用户名不能为空')
+            utility.showerror('用户名不能为空')
             return -1
         if password == '':
-            self.showerror('密码不能为空')
+            utility.showerror('密码不能为空')
             return -1
 
         # 如果连接成功，向服务器发送信息
@@ -72,11 +73,11 @@ class Client:
             self.resetSock()
             return -1
         if 'errStr' in res.keys():
-            self.showerror(res['errStr'])
+            utility.showerror(res['errStr'])
             self.resetSock()#重启socket
             return -1
         else:
-            self.showinfo('登录成功')
+            utility.showinfo('登录成功')
             return 0
 
 
@@ -91,10 +92,10 @@ class Client:
 
         # 检查合法性
         if userName == '':
-            self.showerror('用户名不能为空')
+            utility.showerror('用户名不能为空')
             return
         if password == '':
-            self.showerror('密码不能为空')
+            utility.showerror('密码不能为空')
             return
 
         with open(self.dataFile, 'a+') as fp:
@@ -110,7 +111,7 @@ class Client:
                 accountData = json.loads(accountStr)
 
             if userName in accountData.keys():
-                self.showerror('该用户名已经被注册')
+                utility.showerror('该用户名已经被注册')
                 return
 
             # 写入数据文件
@@ -121,24 +122,30 @@ class Client:
                 }
             })
 
-            self.showinfo('注册成功！')
+            utility.showinfo('注册成功！')
             fp.seek(0)
             fp.truncate()  # 只保留从开头到当前位置，其余删除
             json.dump(accountData, fp, indent=4, separators=(',', ':'))
 
-    def showerror(self, errStr):
-        showerror(title='警告', message=errStr)
-
-    def showinfo(self, infoStr):
-        showinfo(title='信息', message=infoStr)
+    
 
     def send(self, msg: str):
+        '''
+        向服务端发送消息
+        :param msg:要发送的消息字符串
+        '''
         self.cliSock.send(msg.encode())
 
     def recv(self):
-        return self.cliSock.recv(self.bufsize)
+        '''
+        :return: 接收到的字符串
+        '''
+        return self.cliSock.recv(self.bufsize).decode()
 
     def resetSock(self):
+        '''
+        重新设置socket
+        '''
         self.cliSock.close()#连接错误，主动关闭
         self.cliSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
