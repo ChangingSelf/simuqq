@@ -33,8 +33,9 @@ class Server:
         # 监听
         self.serSock.listen(20)
         # 创建连接线程
-        self.acceptThread = threading.Thread(target=self.acceptLoop)
-        self.acceptThread.start()
+        #self.acceptThread = threading.Thread(target=self.acceptLoop)
+        #self.acceptThread.start()
+        self.selectLoop()
 
     def acceptLoop(self):
         '''

@@ -204,6 +204,13 @@ class Client:
             self.resetSock()
             return -1
 
+    def recvLoop(self):
+        '''
+        接收消息的循环
+        '''
+        while True:
+            msgStr = self.cliSock.recv(self.bufsize).decode()
+            print(msgStr)
 
 if __name__ == '__main__':
     host = '127.0.0.1'
