@@ -16,11 +16,12 @@ def showinfo(infoStr:str):
     '''
     tkinter.messagebox.showinfo(title='信息', message=infoStr)
 
-def resolveJsonStr(jsonStr:str):
+def loadJson(jsonStr:str):
     '''
-    解析json字符串，进行错误处理
+    将str转为dict
     :return:解析出的dict，如果不是规定的格式，解析出错时返回空dict
     '''
+    jsonStr = str(jsonStr)
     try:
         jsonDict = json.loads(jsonStr)
     except:
@@ -32,11 +33,26 @@ def resolveJsonStr(jsonStr:str):
 
     return jsonDict
 
+def dumpJson(jsonDict:dict):
+    '''
+    将dict转为str
+    '''
+    if not isinstance(jsonDict,dict):
+        #如果传入的不是字典
+        jsonDict = {}
 
+    try:
+        jsonStr = json.dumps(jsonDict)
+    except:
+        jsonStr = ''
+
+    return jsonStr
 
 
 
 
 if __name__ == '__main__':
-    res = resolveJsonStr('{}')
+    res = loadJson('')
+    res = dumpJson('res')
     print(res)
+    print(type(res))
