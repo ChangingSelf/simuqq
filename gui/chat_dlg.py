@@ -27,14 +27,19 @@ class ChatDlg(tk.Frame):
         self.sendBtn = tk.Button(chatLF,text='发送',command=self.sendCallback)
         self.sendBtn.grid(row=2,column=0,sticky=tk.E)
 
+        
     def getInputContent(self):
         return self.inputTxt.get(0.0,tk.END)
+
+    def clearInputContent(self):
+        self.inputTxt.delete(0.0,tk.END)
     
     def addOutputContent(self,content:str):
         self.outputTxt.config(state=tk.NORMAL)#先调整为可插入，插入完再设置为禁用
         self.outputTxt.insert(tk.INSERT,content+'\n')
         self.outputTxt.see(tk.END)#将滚动条位置移动到最末尾
         self.outputTxt.config(state=tk.DISABLED)
+
 
 def test(self):
     pass

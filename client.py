@@ -190,6 +190,14 @@ class Client:
         msgStr = utility.dumpJson(msgDict)
         # 发送消息
         self.send(msgStr)
+        # 同时在自己这边显示自己说的话
+        # 构建输出内容
+        outputContent = '[{}]{}\n{}'.format(self.userName,time.strftime('%Y/%m/%d %H:%M:%S'),chatMsg)
+
+        self.gui['chatDlg'].addOutputContent(outputContent)
+        # 清空输入框
+        self.gui['chatDlg'].clearInputContent()
+
 
     def send(self, msg: str):
         '''
