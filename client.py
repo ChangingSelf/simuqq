@@ -42,7 +42,9 @@ class Client:
         '''
         关闭程序
         '''
-        self.window.destroy()
+        #self.window.destroy()
+        #for page in self.gui.keys():
+            #self.gui[page].destroy()
         sys.exit(0)
 
 
@@ -88,6 +90,7 @@ class Client:
             self.gotoHomePage()
             #开启接收消息线程
             self.recvThread = threading.Thread(target=self.recvLoop)
+            self.recvThread.setDaemon(True)
             self.recvThread.start()
         else:
             return -1
@@ -164,8 +167,8 @@ class Client:
 
     def gotoHomePage(self):
         
-        for page in self.gui.values():
-            page.grid_forget()
+        for page in self.gui.keys():
+            self.gui[page].grid_forget()
         
         self.window.title('SimuQQ主页面')
         self.gui['homePage'].grid(row=0,column=0)
