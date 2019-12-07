@@ -8,7 +8,7 @@ import tkinter as tk
 class HomePage(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master=master)
-        self.pack()
+        #self.pack()
         self.createWidgets()
 
     def createWidgets(self):

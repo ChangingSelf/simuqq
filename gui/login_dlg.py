@@ -16,7 +16,8 @@ class LoginDlg(tk.Frame):
         #初始化
         self.userName = tk.StringVar()#与文本框双向绑定
         self.password = tk.StringVar()
-        self.pack()
+        #self.pack()
+        #self.grid(row=0,column=0)
         self.createWidgets()
 
 

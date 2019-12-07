@@ -6,6 +6,7 @@ import socket
 import json
 import time
 import gui.login_dlg
+import gui.home_page
 import utility
 import tkinter as tk
 
@@ -21,8 +22,13 @@ class Client:
         self.bufsize = 2048  # 一次最大接收字节数
         # 初始化界面
         self.window = tk.Tk()
-        self.loginDlg = gui.login_dlg.LoginDlg(
-            self.login, self.register, self.window)
+        self.gui = {
+            'loginDlg':gui.login_dlg.LoginDlg(
+            self.login, self.register, self.window),
+            'homePage': gui.home_page.HomePage(self.window)
+        }
+        self.gui['loginDlg'].grid(row=0,column=0)
+        
         # 启动登录界面
         self.window.mainloop()
 
@@ -41,8 +47,8 @@ class Client:
 
     def login(self):
         # 从登录对话框获取信息
-        userName = self.loginDlg.userName.get()
-        password = self.loginDlg.password.get()
+        userName = self.gui['loginDlg'].userName.get()
+        password = self.gui['loginDlg'].password.get()
 
         # 检查合法性
         if userName == '':
@@ -79,7 +85,9 @@ class Client:
             return -1
         else:
             utility.showinfo('登录成功')
+            self.gotoHomePage()
             return 0
+
 
 
     def register(self):
@@ -88,8 +96,8 @@ class Client:
         在填写了用户名和密码之后，如果信息合法，则将信息写入数据文件
         '''
         # 从登录对话框获取信息
-        userName = self.loginDlg.userName.get()
-        password = self.loginDlg.password.get()
+        userName = self.gui['loginDlg'].userName.get()
+        password = self.gui['loginDlg'].password.get()
 
         # 检查合法性
         if userName == '':
@@ -149,6 +157,13 @@ class Client:
         '''
         self.cliSock.close()#连接错误，主动关闭
         self.cliSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    def gotoHomePage(self):
+        
+        for page in self.gui.values():
+            page.grid_forget()
+        
+        self.gui['homePage'].grid(row=0,column=0)
 
 
 
