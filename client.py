@@ -94,8 +94,8 @@ class Client:
                 utility.showinfo('登录成功')
 
             if 'data' in res.keys():
-                contactList = res['data']['curOnline']
-                print(contactList)
+                self.contactList = res['data']['curOnline']
+                self.gui['homePage'].refreshList(self.contactList)
             else:
                 contactList = {}
 

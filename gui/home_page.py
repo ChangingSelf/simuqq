@@ -39,6 +39,16 @@ class HomePage(tk.Frame):
     def geometry(self):
         self.master.geometry('300x400')
 
+    def refreshList(self,curOnlineList):
+        '''
+        刷新列表显示
+        '''
+        #先清空列表
+        self.contactList.delete(0,tk.END)
+        #再加入列表
+        for item in curOnlineList:
+            self.contactList.insert(tk.END,str(item))
+
 if __name__ == '__main__':
     window = tk.Tk()
     homepage = HomePage(window)
