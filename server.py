@@ -3,10 +3,12 @@ simuqq的服务端，开启之后才可以登录成功
 '''
 
 import socket
-import client_data  # 用于保存客户端的数据
 import threading
 import json
 import utility
+import time
+import logging
+logging.basicConfig(level=logging.DEBUG)
 
 
 class Server:
@@ -21,7 +23,7 @@ class Server:
         # 初始化配置
         self.dataFile = 'data\\account_database.json'
         # 在线账号
-        self.clientDict = {}  # 客户端字典，键是账号字符串，值是ClientData
+        self.onlineClients = {}  # 客户端字典，键是账号字符串
 
     def launch(self):
         # 绑定地址
@@ -37,7 +39,7 @@ class Server:
         接受连接的线程循环
         '''
         while True:
-            print('正在等待新的连接')
+            logging.info('正在等待新的连接')
             # 接受新的连接请求
             cliSock, cliAddr = self.serSock.accept()
             # 获取客户端提交的账号密码，客户端以json字符串的形式发送过来
@@ -64,6 +66,17 @@ class Server:
                 self.closeLink(cliSock, errStr)  # 关闭连接
             else:
                 self.send(cliSock,infoStr='登录成功')
+                logging.info('用户[userName={}]登录成功'.format(cliUserName))
+                #将新用户加入在线列表
+                self.onlineClients.update({
+                    cliUserName:{
+                        'socket':cliSock,#客户端socket
+                        'address':cliAddr,#客户端地址
+                        'loginTime':time.time()#登录时间
+                    }
+                })
+                print(self.onlineClients)
+                
 
     def checkAccount(self, userName, password):
         '''
