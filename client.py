@@ -213,11 +213,16 @@ class Client:
         接收消息的循环
         '''
         while True:
-            msgStr = self.userName + '>测试文字'
-            self.send(msgStr)
             msgStr = self.recv()
-            print(msgStr)
-            time.sleep(1)
+            msgDict = utility.loadJson(msgStr)
+            if not utility.isCorrectMsg(msgDict):
+                continue#如果消息不正确，忽略这个消息
+            
+            if msgDict['type'] == 'data':
+                #如果接收到数据刷新消息
+                self.contactList = msgDict['data']['curOnline']
+                self.gui['homePage'].refreshList(self.contactList)
+                
 
 if __name__ == '__main__':
     host = '127.0.0.1'

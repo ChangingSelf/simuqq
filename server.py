@@ -71,23 +71,32 @@ class Server:
                         #如果登录成功
                         readList.append(cliSock)  # 将新的客户端socket加入监听列表
                         message_dict[cliSock] = []#为新的socket创建消息列表
+                        self.refreshCurOnline()#给所有在线客户端刷新在线信息
                 else:
                     # 已连接的用户发送消息过来
                     # 接收一下
-                    data = sock.recv(self.bufsize)
-                    if not data:
+                    
+                    try:
+                        data = sock.recv(self.bufsize)
+                    except:
                         # 如果收到空数据，代表客户端已经断开连接
                         readList.remove(sock)
                         del message_dict[sock]#删除对应的消息队列
-                        print('一个客户端断开了连接')
-                        sock.close()
-
-                    else:
-                        #收到老用户的消息
-                        dataStr = data.decode()
-                        #将消息加入对应的消息队列
-                        message_dict[sock].append(dataStr)
-                        writeList.append(sock)
+                        self.closeLink(sock)
+                        print('客户端[{}]断开了连接'.format(self.getUserNameBySock(sock)))
+                    else:#如果没有出现异常，再检查是否收到空数据
+                        if not data:
+                            # 如果收到空数据，代表客户端已经断开连接
+                            readList.remove(sock)
+                            del message_dict[sock]#删除对应的消息队列
+                            self.closeLink(sock)
+                            print('客户端[{}]断开了连接'.format(self.getUserNameBySock(sock)))
+                        else:
+                            #收到老用户的消息
+                            dataStr = data.decode()
+                            #将消息加入对应的消息队列
+                            message_dict[sock].append(dataStr)
+                            writeList.append(sock)
             
             # 2.处理待回复的消息
             for sock in writableList:
@@ -96,7 +105,7 @@ class Server:
                     del message_dict[sock][0]
                     self.addressMsg(sock,dataStr)#处理消息  
                     #测试代码：测试消息处理是否可用
-                    sock.sendall(('echo:'+dataStr).encode())                  
+                    #sock.sendall(('echo:'+dataStr).encode())                  
                     
                 #将消息队列中所有消息处理完毕，则将它从待回复队列中删除
                 writeList.remove(sock)
@@ -132,11 +141,20 @@ class Server:
         '''
         关闭连接
         '''
+        # 发送错误消息
         if errStr != '':
             msgDict = {
+                'type':'err',
                 'errStr': errStr
             }
             self.send(cliSock, **msgDict)
+
+        # 删除该客户端
+        for userName,accountInfo in list(self.onlineClients.items()):
+            if accountInfo['socket'] == cliSock:
+                del self.onlineClients[userName]# 该客户端下线
+        # 刷新其他客户端的在线列表数据
+        self.refreshCurOnline()
         cliSock.close()  # 关闭此连接
 
     def send(self, cliSock: socket, **msgDict):
@@ -148,11 +166,7 @@ class Server:
         '''
         登录成功之后向客户端发送确认消息以及当前在线客户端列表
         '''
-        curOnline = {
-            'curOnline':[]
-        }
-        for client in self.onlineClients.keys():
-            curOnline['curOnline'].append(client)
+        curOnline = self.getCurOnline()#获取当前在线列表
         
         msgDict = {
             'type':'login',
@@ -215,8 +229,37 @@ class Server:
         if not utility.isCorrectMsg(msgDict):
             #如果消息不合法
             return -1
-        # 不会收到登录消息
+        
+    def getCurOnline(self):
+        '''
+        :return: 当前在线的账号数据dict，可直接作为消息的data键的值
+        '''
+        curOnline = {
+            'curOnline':[]
+        }
+        for client in self.onlineClients.keys():
+            curOnline['curOnline'].append(client)
+        return curOnline
 
+    def refreshCurOnline(self):
+        '''
+        给所有在线的客户端发送数据刷新消息
+        '''
+        for userName,accountInfo in self.onlineClients.items():
+            msgDict={
+                'type':'data',
+                'data':self.getCurOnline()
+            }
+            self.send(accountInfo['socket'],**msgDict)
+
+    def getUserNameBySock(self,cliSock):
+        '''
+        :return: socket对应的用户名
+        '''
+        for userName,accountInfo in list(self.onlineClients.items()):
+            if accountInfo['socket'] == cliSock:
+                return userName
+        return ''
 
 if __name__ == '__main__':
     server = Server(9999)
