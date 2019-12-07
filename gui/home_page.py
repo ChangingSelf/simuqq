@@ -9,6 +9,7 @@ class HomePage(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master=master)
         #self.pack()
+        self.userName = tk.StringVar()
         self.createWidgets()
 
     def createWidgets(self):
@@ -20,6 +21,8 @@ class HomePage(tk.Frame):
         # 个人信息标签
         self.profileLab = tk.Label(profileLF, text='账号:')
         self.profileLab.grid(row=0, column=0)
+        self.userNameLab = tk.Label(profileLF,textvariable=self.userName)
+        self.userNameLab.grid(row=0, column=1)
 
         # 好友列表框架==================
         contactLF = tk.LabelFrame(self, text='好友列表')

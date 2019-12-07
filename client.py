@@ -22,6 +22,7 @@ class Client:
         self.bufsize = 2048  # 一次最大接收字节数
         # 初始化界面
         self.window = tk.Tk()
+        self.window.title('SimuQQ登录界面')
         self.gui = {
             'loginDlg':gui.login_dlg.LoginDlg(
             self.login, self.register, self.window),
@@ -85,6 +86,7 @@ class Client:
             return -1
         else:
             utility.showinfo('登录成功')
+            self.userName = userName
             self.gotoHomePage()
             return 0
 
@@ -163,7 +165,9 @@ class Client:
         for page in self.gui.values():
             page.grid_forget()
         
+        self.window.title('SimuQQ主页面')
         self.gui['homePage'].grid(row=0,column=0)
+        self.gui['homePage'].userName.set(self.userName)
 
 
 
