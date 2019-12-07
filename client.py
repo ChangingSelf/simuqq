@@ -3,6 +3,7 @@
 simuqq的客户端
 '''
 import socket
+import sys
 import threading
 import json
 import time
@@ -24,6 +25,7 @@ class Client:
         # 初始化界面
         self.window = tk.Tk()
         self.window.title('SimuQQ登录界面')
+        self.window.protocol("WM_DELETE_WINDOW", self.quit);#按右上角关闭即关闭程序
         self.window.resizable(0,0)#不可改变大小
         self.gui = {
             'loginDlg':gui.login_dlg.LoginDlg(
@@ -35,6 +37,14 @@ class Client:
         
         # 启动登录界面
         self.window.mainloop()
+    
+    def quit(self):
+        '''
+        关闭程序
+        '''
+        self.window.destroy()
+        sys.exit(0)
+
 
     def connect(self):
         # 连接
