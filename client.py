@@ -71,7 +71,12 @@ class Client:
         # 如果发送信息成功，且账号信息正确，则弹出好友列表页面
 
         # 等待服务端的确认信息
-        return self.recvLoginAck()
+        if self.recvLoginAck() == 0:
+            #跳转到主页面
+            self.userName = userName
+            self.gotoHomePage()
+        else:
+            return -1
 
 
 
@@ -193,9 +198,6 @@ class Client:
             else:
                 contactList = {}
 
-            #跳转到主页面
-            self.userName = userName
-            self.gotoHomePage()
             return 0
         else:
             #如果不是err消息也不是确认消息，则登录失败

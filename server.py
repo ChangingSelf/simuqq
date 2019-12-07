@@ -43,19 +43,18 @@ class Server:
             # 接受新的连接请求
             cliSock, cliAddr = self.serSock.accept()
             # 获取客户端提交的账号密码，客户端以json字符串的形式发送过来
-            cliUserData = cliSock.recv(1024).decode()
-            cliUserData = utility.loadJson(cliUserData)
+            loginStr = cliSock.recv(1024).decode()
+            loginDict = utility.loadJson(loginStr)
 
-            if ('userName' not in cliUserData.keys()) or ('password' not in cliUserData.keys()):
-                # 如果发送过来的数据没有按照格式，那么给客户端发送错误信息
+            #检查登录消息是否正确
+            if not utility.isCorrectMsg(loginDict):
                 errStr = '数据有误，请重新连接'
                 self.closeLink(cliSock, errStr)  # 关闭连接
                 continue
 
-            cliUserName = cliUserData['userName']
-            cliPassword = cliUserData['password']
-
             # 检查账号
+            cliUserName = loginDict['userName']
+            cliPassword = loginDict['password']
             res = self.checkAccount(cliUserName, cliPassword)
             if res == -1:
                 errStr = '账号不存在'
@@ -124,8 +123,16 @@ class Server:
         }
         for client in self.onlineClients.keys():
             curOnline['curOnline'].append(client)
-            
-        self.send(cliSock, infoStr='登录成功!',data=curOnline)
+        
+        msgDict = {
+            'type':'login',
+            'infoStr':'登录成功！',
+            'data':curOnline,
+            'userName':'',
+            'password':''
+        }
+
+        self.send(cliSock,**msgDict)
         
 
 
