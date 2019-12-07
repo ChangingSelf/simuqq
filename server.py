@@ -9,7 +9,7 @@ import utility
 import time
 import select
 import logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 
 class Server:
@@ -55,6 +55,8 @@ class Server:
         writeList = []
         message_dict = {}#存储消息用的字典，键为socket，值为消息列表
         i=0
+
+        logging.info('服务器已经启动，正在等待客户端的连接')
         while True:
             logging.debug('循环数：'+str(i))
             i+=1
@@ -82,8 +84,9 @@ class Server:
                         # 如果收到空数据，代表客户端已经断开连接
                         readList.remove(sock)
                         del message_dict[sock]#删除对应的消息队列
+                        
+                        logging.info('客户端[userName={}]断开了连接'.format(self.getUserNameBySock(sock)))
                         self.closeLink(sock)
-                        print('客户端[{}]断开了连接'.format(self.getUserNameBySock(sock)))
                     else:#如果没有出现异常，再检查是否收到空数据
                         if not data:
                             # 如果收到空数据，代表客户端已经断开连接
