@@ -71,33 +71,7 @@ class Client:
         # 如果发送信息成功，且账号信息正确，则弹出好友列表页面
 
         # 等待服务端的确认信息
-        res = self.recv()
-        try:
-            res = json.loads(res)
-        except:
-            self.resetSock()
-            return -1
-        if 'errStr' in res.keys():
-            utility.showerror(res['errStr'])
-            self.resetSock()#重启socket
-            return -1
-        else:
-            #登录成功，输出信息
-            if 'infoStr' in res.keys():
-                utility.showinfo(res['infoStr'])
-            else: 
-                utility.showinfo('登录成功')
-
-            if 'data' in res.keys():
-                self.contactList = res['data']['curOnline']
-                self.gui['homePage'].refreshList(self.contactList)
-            else:
-                contactList = {}
-
-            #跳转到主页面
-            self.userName = userName
-            self.gotoHomePage()
-            return 0
+        return self.recvLoginAck()
 
 
 
@@ -192,20 +166,21 @@ class Client:
     def recvLoginAck(self):
         '''
         等待服务端传回确认
+        :return: 成功返回0，失败返回-1
         '''
         res = self.recv()
         res = utility.loadJson(res)
-        if res == {} or 'type' in res.keys():
+        #检查消息合法性
+        if not utility.isCorrectMsg(res):
             self.resetSock()
             return -1
 
-        if  and res['type'] == 'err':
+        if res['type'] == 'err':
             #如果收到的是服务端的错误消息
-            if 'errStr' in res.keys():
-                utility.showerror(res['errStr'])
-                self.resetSock()#重启socket
-                return -1
-        else:
+            utility.showerror(res['errStr'])
+            self.resetSock()#重启socket
+            return -1
+        elif res['type'] == 'login':
             #登录成功，输出信息
             if 'infoStr' in res.keys():
                 utility.showinfo(res['infoStr'])
@@ -222,6 +197,11 @@ class Client:
             self.userName = userName
             self.gotoHomePage()
             return 0
+        else:
+            #如果不是err消息也不是确认消息，则登录失败
+            self.resetSock()
+            return -1
+
 
 if __name__ == '__main__':
     host = '127.0.0.1'
