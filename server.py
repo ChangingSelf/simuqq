@@ -46,13 +46,12 @@ class Server:
             cliUserData = cliSock.recv(1024).decode()
             cliUserData = utility.loadJson(cliUserData)
 
-            
             if ('userName' not in cliUserData.keys()) or ('password' not in cliUserData.keys()):
                 # 如果发送过来的数据没有按照格式，那么给客户端发送错误信息
                 errStr = '数据有误，请重新连接'
                 self.closeLink(cliSock, errStr)  # 关闭连接
                 continue
-            
+
             cliUserName = cliUserData['userName']
             cliPassword = cliUserData['password']
 
@@ -65,18 +64,17 @@ class Server:
                 errStr = '密码错误'
                 self.closeLink(cliSock, errStr)  # 关闭连接
             else:
-                self.send(cliSock,infoStr='登录成功')
                 logging.info('用户[userName={}]登录成功'.format(cliUserName))
-                #将新用户加入在线列表
+                # 将新用户加入在线列表
                 self.onlineClients.update({
-                    cliUserName:{
-                        'socket':cliSock,#客户端socket
-                        'address':cliAddr,#客户端地址
-                        'loginTime':time.time()#登录时间
+                    cliUserName: {
+                        'socket': cliSock,  # 客户端socket
+                        'address': cliAddr,  # 客户端地址
+                        'loginTime': time.time()  # 登录时间
                     }
                 })
-                print(self.onlineClients)
-                
+                # 登录成功，向该客户端发送确认消息
+                self.sendAck(cliSock)
 
     def checkAccount(self, userName, password):
         '''
@@ -97,7 +95,7 @@ class Server:
             return -1  # 账号不存在
 
         if accountData[userName]['password'] != password:
-            return -2 # 密码不正确
+            return -2  # 密码不正确
 
         return 0
 
@@ -107,17 +105,30 @@ class Server:
         '''
         if errStr != '':
             msgDict = {
-                'errStr':errStr
+                'errStr': errStr
             }
-            self.send(cliSock,**msgDict)
+            self.send(cliSock, **msgDict)
         cliSock.close()  # 关闭此连接
-    
-    def send(self,cliSock:socket,**msgDict):
-        msgStr = json.dumps(msgDict)
+
+    def send(self, cliSock: socket, **msgDict):
+        
+        msgStr = utility.dumpJson(msgDict)
         cliSock.send(msgStr.encode())
+
+    def sendAck(self, cliSock):
+        '''
+        登录成功之后向客户端发送确认消息以及当前在线客户端列表
+        '''
+        curOnline = {
+            'curOnline':[]
+        }
+        for client in self.onlineClients.keys():
+            curOnline['curOnline'].append(client)
+            
+        self.send(cliSock, infoStr='登录成功!',data=curOnline)
+        
 
 
 if __name__ == '__main__':
     server = Server(9999)
     server.launch()
-    

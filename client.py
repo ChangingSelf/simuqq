@@ -87,7 +87,19 @@ class Client:
             self.resetSock()#重启socket
             return -1
         else:
-            utility.showinfo('登录成功')
+            #登录成功，输出信息
+            if 'infoStr' in res.keys():
+                utility.showinfo(res['infoStr'])
+            else: 
+                utility.showinfo('登录成功')
+
+            if 'data' in res.keys():
+                contactList = res['data']['curOnline']
+                print(contactList)
+            else:
+                contactList = {}
+
+            #跳转到主页面
             self.userName = userName
             self.gotoHomePage()
             return 0
