@@ -23,12 +23,14 @@ class Client:
         # 初始化界面
         self.window = tk.Tk()
         self.window.title('SimuQQ登录界面')
+        self.window.resizable(0,0)#不可改变大小
         self.gui = {
             'loginDlg':gui.login_dlg.LoginDlg(
             self.login, self.register, self.window),
             'homePage': gui.home_page.HomePage(self.window)
         }
         self.gui['loginDlg'].grid(row=0,column=0)
+        self.gui['loginDlg'].geometry()
         
         # 启动登录界面
         self.window.mainloop()
@@ -168,6 +170,7 @@ class Client:
         self.window.title('SimuQQ主页面')
         self.gui['homePage'].grid(row=0,column=0)
         self.gui['homePage'].userName.set(self.userName)
+        self.gui['homePage'].geometry()
 
 
 

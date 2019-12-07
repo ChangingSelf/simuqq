@@ -9,6 +9,9 @@ class HomePage(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master=master)
         #self.pack()
+        self.master = master
+        self.geometry()
+        
         self.userName = tk.StringVar()
         self.createWidgets()
 
@@ -33,6 +36,8 @@ class HomePage(tk.Frame):
         self.contactList = tk.Listbox(contactLF)
         self.contactList.grid(row=0,column=0)
 
+    def geometry(self):
+        self.master.geometry('300x400')
 
 if __name__ == '__main__':
     window = tk.Tk()

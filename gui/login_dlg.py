@@ -10,6 +10,7 @@ class LoginDlg(tk.Frame):
     def __init__(self, loginCallback,regCallback,master=None):
         super().__init__(master=master)
         self.master = master
+        self.geometry()
         #设置按钮回调函数
         self.loginCallback = loginCallback
         self.regCallback = regCallback
@@ -24,7 +25,7 @@ class LoginDlg(tk.Frame):
     def createWidgets(self):
         # 登录框架=============
         loginLF = tk.LabelFrame(self, text='登录')
-        loginLF.grid(row=0, column=0)
+        loginLF.grid(row=0, column=0,sticky=tk.E+tk.W)
         self.loginLF = loginLF#这里需要将它保存为属性，否则这个函数结束后会出问题
 
         # 用户名
@@ -51,6 +52,9 @@ class LoginDlg(tk.Frame):
     def test(self):
         print(self.userName.get())
         print(self.password.get())
+
+    def geometry(self):
+        self.master.geometry('300x100')
 
 
 def test2():
