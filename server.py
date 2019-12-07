@@ -230,6 +230,10 @@ class Server:
             #如果消息不合法
             return -1
         
+        if msgDict['type'] == 'msg':
+            #如果是发送过来的消息
+            logging.debug('[{}]对[{}]说：{}'.format(self.getUserNameBySock(cliSock),msgDict['userName'],msgDict['message']))
+        
     def getCurOnline(self):
         '''
         :return: 当前在线的账号数据dict，可直接作为消息的data键的值
