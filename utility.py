@@ -73,6 +73,8 @@ def isCorrectMsg(msg:dict):
         elif not isinstance(msg['data'],dict):
             return False
     elif msg['type'] == 'msg':
+        if 'userName' not in msg.keys():
+            return False
         if 'message' not in msg.keys():
             return False
     elif msg['type'] == 'info':

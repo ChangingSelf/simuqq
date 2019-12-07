@@ -9,7 +9,7 @@ class ChatDlg(tk.Frame):
         super().__init__(master=master)
         self.master = master
         self.sendCallback = sendCallback
-        self.pack()
+        #self.pack()
         self.createWidgets()
 
     def createWidgets(self):

@@ -9,34 +9,40 @@ import json
 import time
 import gui.login_dlg
 import gui.home_page
+import gui.chat_dlg
 import utility
 import tkinter as tk
 
 
 class Client:
     def __init__(self, host:str, port:int):
-        # 初始化socket
+        # 初始化属性
         self.cliSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.host = host
         self.port = port
+        self.chatWith = ''#聊天的对象的用户名
+        
         # 初始化配置
         self.dataFile = 'data\\account_database.json' #数据文件路径
         self.bufsize = 2048  # 一次最大接收字节数
         # 初始化界面
-        self.window = tk.Tk()
+        self.window = tk.Tk()#主窗口
         self.window.title('SimuQQ登录界面')
         self.window.protocol("WM_DELETE_WINDOW", self.quit);#按右上角关闭即关闭程序
         self.window.resizable(0,0)#不可改变大小
 
+        self.chatWindow = tk.Tk()#聊天窗口
         self.gui = {
             'loginDlg':gui.login_dlg.LoginDlg(
             self.login, self.register, self.window),
-            'homePage': gui.home_page.HomePage(self.chat,self.window)
+            'homePage': gui.home_page.HomePage(self.chat,self.window),
+            'chatDlg':gui.chat_dlg.ChatDlg(self.sendChatMsg,self.chatWindow)
         }
         self.gui['loginDlg'].grid(row=0,column=0)
         self.gui['loginDlg'].geometry()
         
         # 启动登录界面
+        self.chatWindow.withdraw()
         self.window.mainloop()
     
     def quit(self):
@@ -151,9 +157,19 @@ class Client:
         #获取当前用户名
         userName = self.gui['homePage'].getCurSelect()
         
-        #打开聊天界面
+        #打开聊天窗口
+        self.chatWith = userName #设置聊天对象
+        self.gui['chatDlg'].grid(row=0,column=0)
+        self.chatWindow.title('[{}]向[{}]发起的聊天'.format(self.userName,userName))
+        self.chatWindow.deiconify()
+        self.chatWindow.mainloop()
 
 
+    def sendChatMsg(self):
+        '''
+        发送聊天消息
+        '''
+        print('发送聊天消息')
 
 
     def send(self, msg: str):
