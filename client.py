@@ -28,10 +28,11 @@ class Client:
         # 初始化界面
         self.window = tk.Tk()#主窗口
         self.window.title('SimuQQ登录界面')
-        self.window.protocol("WM_DELETE_WINDOW", self.quit);#按右上角关闭即关闭程序
+        self.window.protocol("WM_DELETE_WINDOW", self.quit)#按右上角关闭即关闭程序
         self.window.resizable(0,0)#不可改变大小
 
-        self.chatWindow = tk.Tk()#聊天窗口
+        self.chatWindow = tk.Toplevel(self.window)
+        self.chatWindow.protocol("WM_DELETE_WINDOW", self.hideChatWindow)#右上角关闭即隐藏聊天窗口
         self.gui = {
             'loginDlg':gui.login_dlg.LoginDlg(
             self.login, self.register, self.window),
@@ -54,6 +55,11 @@ class Client:
             #self.gui[page].destroy()
         sys.exit(0)
 
+    def hideChatWindow(self):
+        '''
+        隐藏聊天窗口
+        '''
+        self.chatWindow.withdraw()
 
     def connect(self):
         # 连接
@@ -65,7 +71,7 @@ class Client:
             
             return -1
         #测试用的输出
-        print('连接成功')
+        #print('连接成功')
         return 0
 
     def login(self):
@@ -162,7 +168,7 @@ class Client:
         self.gui['chatDlg'].grid(row=0,column=0)
         self.chatWindow.title('[{}]向[{}]发起的聊天'.format(self.userName,userName))
         self.chatWindow.deiconify()
-        self.chatWindow.mainloop()
+        #self.chatWindow.mainloop()
 
 
     def sendChatMsg(self):
