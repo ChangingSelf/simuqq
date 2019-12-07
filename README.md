@@ -30,6 +30,7 @@
 
 ```python
 {
+    'type':当前消息类型（必选），
     'userName':用户名,
     'password':密码,
     'errStr':错误字符串,
@@ -38,6 +39,16 @@
     'message':聊天消息
 }
 ```
+
+### 消息类型
+
+- 登录`login`：必须设置`userName`和`password`
+- 数据刷新`data`：必须设置`data`，且为字典
+- 聊天消息`msg`: 必须设置`message`
+- 提示`info`: 必须设置`infoStr`
+- 错误`err`:必须设置`errStr`
+
+
 
 ### 登录流程
 

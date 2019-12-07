@@ -66,12 +66,7 @@ class Client:
         if res != 0:
             return -1
         # 构造并发送消息
-        accountData = {
-            'userName': userName,
-            'password': password
-        }
-        accountStr = json.dumps(accountData)
-        self.send(accountStr)
+        self.sendLoginData(userName,password)
 
         # 如果发送信息成功，且账号信息正确，则弹出好友列表页面
 
@@ -183,8 +178,50 @@ class Client:
         self.gui['homePage'].grid(row=0,column=0)
         self.gui['homePage'].userName.set(self.userName)
         self.gui['homePage'].geometry()
+    
+    def sendLoginData(self,userName:str,password:str):
+        # 构造并发送消息
+        accountData = {
+            'type':'login',
+            'userName': userName,
+            'password': password
+        }
+        accountStr = utility.dumpJson(accountData)
+        self.send(accountStr)
 
+    def recvLoginAck(self):
+        '''
+        等待服务端传回确认
+        '''
+        res = self.recv()
+        res = utility.loadJson(res)
+        if res == {} or 'type' in res.keys():
+            self.resetSock()
+            return -1
 
+        if  and res['type'] == 'err':
+            #如果收到的是服务端的错误消息
+            if 'errStr' in res.keys():
+                utility.showerror(res['errStr'])
+                self.resetSock()#重启socket
+                return -1
+        else:
+            #登录成功，输出信息
+            if 'infoStr' in res.keys():
+                utility.showinfo(res['infoStr'])
+            else: 
+                utility.showinfo('登录成功')
+
+            if 'data' in res.keys():
+                self.contactList = res['data']['curOnline']
+                self.gui['homePage'].refreshList(self.contactList)
+            else:
+                contactList = {}
+
+            #跳转到主页面
+            self.userName = userName
+            self.gotoHomePage()
+            return 0
 
 if __name__ == '__main__':
     host = '127.0.0.1'

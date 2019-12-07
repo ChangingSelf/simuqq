@@ -48,8 +48,45 @@ def dumpJson(jsonDict:dict):
 
     return jsonStr
 
+def isCorrectMsg(msg:dict):
+    '''
+    判断收到的消息是否符合规定
+    :return: 不符合则返回False
+    '''
+    if not isinstance(msg,dict):
+        #如果不是字典，不合法
+        return False
+    
+    if 'type' not in msg.keys():
+        #如果不含type字段，不合法
+        return False
+    
+    # 每种类型的消息都有对应的必选字段
+    if msg['type'] == 'login':
+        if 'userName' not in msg.keys():
+            return False
+        if 'password' not in msg.keys():
+            return False
+    elif msg['type'] == 'data':
+        if 'data' not in msg.keys():
+            return False
+        elif not isinstance(msg['data'],dict):
+            return False
+    elif msg['type'] == 'msg':
+        if 'message' not in msg.keys():
+            return False
+    elif msg['type'] == 'info':
+        if 'infoStr' not in msg.keys():
+            return False
+    elif msg['type'] == 'err':
+        if 'errStr' not in msg.keys():
+            return False
+    else:
+        #如果出现没有规定的type，也不合法
+        return False
 
-
+    #以上条件皆满足，则为正确的消息
+    return True
 
 if __name__ == '__main__':
     res = loadJson('')
