@@ -3,6 +3,7 @@
 simuqq的客户端
 '''
 import socket
+import threading
 import json
 import time
 import gui.login_dlg
@@ -75,6 +76,9 @@ class Client:
             #跳转到主页面
             self.userName = userName
             self.gotoHomePage()
+            #开启接收消息线程
+            self.recvThread = threading.Thread(target=self.recvLoop)
+            self.recvThread.start()
         else:
             return -1
 
@@ -209,8 +213,11 @@ class Client:
         接收消息的循环
         '''
         while True:
-            msgStr = self.cliSock.recv(self.bufsize).decode()
+            msgStr = self.userName + '>测试文字'
+            self.send(msgStr)
+            msgStr = self.recv()
             print(msgStr)
+            time.sleep(1)
 
 if __name__ == '__main__':
     host = '127.0.0.1'

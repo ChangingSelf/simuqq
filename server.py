@@ -94,7 +94,9 @@ class Server:
                 while len(message_dict[sock]) > 0:
                     dataStr = message_dict[sock][0]#取出消息队列中第一个消息
                     del message_dict[sock][0]
-                    self.addressMsg(sock,dataStr)#处理消息                    
+                    self.addressMsg(sock,dataStr)#处理消息  
+                    #测试代码：测试消息处理是否可用
+                    sock.sendall(('echo:'+dataStr).encode())                  
                     
                 #将消息队列中所有消息处理完毕，则将它从待回复队列中删除
                 writeList.remove(sock)
