@@ -23,7 +23,7 @@ class Client:
         self.chatWith = ''  # 聊天的对象的用户名
 
         # 初始化配置
-        self.dataFile = 'data\\account_database.json'  # 数据文件路径
+        self.dataFile = 'account_database.json'  # 数据文件路径
         self.bufsize = 2048  # 一次最大接收字节数
         # 初始化界面
         self.window = tk.Tk()  # 主窗口

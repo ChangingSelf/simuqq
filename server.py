@@ -22,7 +22,7 @@ class Server:
         self.host = '127.0.0.1'
         self.serSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # 初始化配置
-        self.dataFile = 'data\\account_database.json'
+        self.dataFile = 'account_database.json'
         self.bufsize = 2048  # 一次最大接收字节数
         # 在线账号
         self.onlineClients = {}  # 客户端字典，键是账号字符串
