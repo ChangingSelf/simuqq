@@ -63,6 +63,9 @@ class Client:
         self.chatWindow.withdraw()
 
     def connect(self):
+        '''
+        :return: 连接成功返回0，失败返回-1
+        '''
         # 连接
 
         try:
@@ -76,6 +79,10 @@ class Client:
         return 0
 
     def login(self):
+        '''
+        登录
+        :return: 登录成功返回0，失败返回-1
+        '''
         # 从登录对话框获取信息
         userName = self.gui['loginDlg'].userName.get()
         password = self.gui['loginDlg'].password.get()
@@ -113,6 +120,7 @@ class Client:
         '''
         注册
         在填写了用户名和密码之后，如果信息合法，则将信息写入数据文件
+        :return: 注册成功返回0,失败返回-1
         '''
         # 从登录对话框获取信息
         userName = self.gui['loginDlg'].userName.get()
@@ -121,10 +129,10 @@ class Client:
         # 检查合法性
         if userName == '':
             utility.showerror('用户名不能为空')
-            return
+            return -1
         if password == '':
             utility.showerror('密码不能为空')
-            return
+            return -1
 
         with open(self.dataFile, 'a+') as fp:
             # 使用a+方式打开，防止文件内容被覆盖
@@ -140,7 +148,7 @@ class Client:
 
             if userName in accountData.keys():
                 utility.showerror('该用户名已经被注册')
-                return
+                return -1
 
             # 写入数据文件
             accountData.update({
@@ -155,6 +163,8 @@ class Client:
             fp.truncate()  # 只保留从开头到当前位置，其余删除
             json.dump(accountData, fp, indent=4, separators=(',', ':'))
 
+        return 0
+
     def chat(self, event):
         '''
         与当前选中的客户端聊天
@@ -165,14 +175,16 @@ class Client:
         # 打开聊天窗口
         self.openChatWindow(userName)
 
-    def openChatWindow(self,userName):
+    def openChatWindow(self, userName):
+        '''
+        打开聊天窗口
+        :param userName: 聊天对象的用户名
+        '''
         self.chatWith = userName  # 设置聊天对象
         self.gui['chatDlg'].grid(row=0, column=0)
         self.chatWindow.title('[{}]向[{}]发起的聊天'.format(self.userName, userName))
         self.chatWindow.deiconify()
         # self.chatWindow.mainloop()
-
-
 
     def sendChatMsg(self):
         '''
@@ -192,12 +204,12 @@ class Client:
         self.send(msgStr)
         # 同时在自己这边显示自己说的话
         # 构建输出内容
-        outputContent = '[{}]{}\n{}'.format(self.userName,time.strftime('%Y/%m/%d %H:%M:%S'),chatMsg)
+        outputContent = '[{}]{}\n{}'.format(
+            self.userName, time.strftime('%Y/%m/%d %H:%M:%S'), chatMsg)
 
         self.gui['chatDlg'].addOutputContent(outputContent)
         # 清空输入框
         self.gui['chatDlg'].clearInputContent()
-
 
     def send(self, msg: str):
         '''
@@ -220,6 +232,9 @@ class Client:
         self.cliSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def gotoHomePage(self):
+        '''
+        跳转到主页面
+        '''
 
         for page in self.gui.keys():
             self.gui[page].grid_forget()
@@ -230,6 +245,9 @@ class Client:
         self.gui['homePage'].geometry()
 
     def sendLoginData(self, userName: str, password: str):
+        '''
+        发送登录数据
+        '''
         # 构造并发送消息
         accountData = {
             'type': 'login',
@@ -293,10 +311,10 @@ class Client:
                 # 如果接收到聊天消息
                 self.openChatWindow(msgDict['userName'])
                 # 构建输出内容
-                outputContent = '[{}]{}\n{}'.format(msgDict['userName'],time.strftime('%Y/%m/%d %H:%M:%S'),msgDict['message'])
+                outputContent = '[{}]{}\n{}'.format(
+                    msgDict['userName'], time.strftime('%Y/%m/%d %H:%M:%S'), msgDict['message'])
 
                 self.gui['chatDlg'].addOutputContent(outputContent)
-
 
 
 if __name__ == '__main__':
