@@ -1,7 +1,11 @@
 # simuqq
- 仿qq即时通信软件
+ 仿qq即时通信软件，使用python编写的计算机网络课设
 
+详细介绍请见：
 
+- [博客文章](http://yxchangingself.xyz/posts/IMS_base_on_LAN/#more)
+
+- [bilibili视频](https://www.bilibili.com/video/av83477871/)
 
 ## 功能需求
 
